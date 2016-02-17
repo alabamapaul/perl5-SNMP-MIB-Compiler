@@ -41,7 +41,7 @@ my $good = {
         }
       },
       'includes' => [ 'systemGroup', 'snmpGroup', 'snmpSetGroup',
-		      'snmpBasicNotificationsGroup' ]
+          'snmpBasicNotificationsGroup' ]
     },
     'TCP-MIB' => {
       'variation' => {

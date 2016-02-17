@@ -45,9 +45,9 @@ my $good = {
       ],
       'group' => {
         'fooCommunityGroup2' =>
-		  '"This group is mandatory for foo entities too."',
+      '"This group is mandatory for foo entities too."',
         'fooCommunityGroup' =>
-		  '"This group is mandatory for foo entities."'
+      '"This group is mandatory for foo entities."'
       }
     }
   }
@@ -186,7 +186,7 @@ $res = $mib->parse_modulecompliance();
 $good = {
   'oid' => [ 'snmpNotifyCompliances', 2 ],
   'description' =>
-	  '"The compliance statement for SNMP entities which implement
+    '"The compliance statement for SNMP entities which implement
             SNMP Traps with filtering, and read-create operations on
             all related tables."',
   'status' => 'current',

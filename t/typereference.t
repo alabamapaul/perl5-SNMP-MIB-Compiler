@@ -23,14 +23,14 @@ $mib->{'stream'} = $s;
 $mib->parse_Module;
 
 my $good = { 'type' => 'OBJECT-TYPE',
-	     'access' => 'read-only',
-	     'oid' => [ 'foo', 1 ],
-	     'description' => '" "',
-	     'status' => 'mandatory',
-	     'syntax' => { 'type' => 'INTEGER' }};
+       'access' => 'read-only',
+       'oid' => [ 'foo', 1 ],
+       'description' => '" "',
+       'status' => 'mandatory',
+       'syntax' => { 'type' => 'INTEGER' }};
 
 print Compare($mib->{'nodes'}{'bar'},
-	      $good) ? "" : "not ", "ok ", $t++, "\n";
+        $good) ? "" : "not ", "ok ", $t++, "\n";
 
 # end
 

@@ -25,7 +25,7 @@ $mib->parse_Module;
 my $good = { 1 => 'noUnderscore', 2 => 'with_underscore' };
 
 print Compare($mib->{'nodes'}{'underScore'}{'syntax'}{'values'},
-	      $good) ? "" : "not ", "ok ", $t++, "\n";
+        $good) ? "" : "not ", "ok ", $t++, "\n";
 
 # end
 

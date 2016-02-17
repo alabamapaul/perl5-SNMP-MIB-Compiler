@@ -54,7 +54,7 @@ print Compare($res, $good) ? "" : "not ", "ok ", $t++, "\n";
 # Test 7 : (1..3|5..7)
 $res = $mib->parse_subtype();
 $good = { 'choice' => [ { 'range' => { 'min' => 1, 'max' => 3 } },
-			{ 'range' => { 'min' => 5, 'max' => 7 } } ] };
+      { 'range' => { 'min' => 5, 'max' => 7 } } ] };
 print Compare($res, $good) ? "" : "not ", "ok ", $t++, "\n";
 
 # Test 8 : (1|3..5|7)
@@ -65,7 +65,7 @@ print Compare($res, $good) ? "" : "not ", "ok ", $t++, "\n";
 # Test 9 : (SIZE (1 | 4..85))
 $res = $mib->parse_subtype();
 $good = { 'size' => { 'choice' =>
-		      [ 1, { 'range' => { 'min' => 4, 'max' => 85 } } ] } };
+          [ 1, { 'range' => { 'min' => 4, 'max' => 85 } } ] } };
 print Compare($res, $good) ? "" : "not ", "ok ", $t++, "\n";
 
 # end
