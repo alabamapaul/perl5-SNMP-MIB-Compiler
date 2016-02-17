@@ -89,6 +89,10 @@ my $ITEM_HEXADECIMALSTRING = '\'[A-F0-9]*\'H';
 # Single character items (Section 8.13)
 my $ITEM_SINGLECHARACTER = '[\{\}\<,\.\(\)\[\]\-;]';
 
+=for Pod::Coverage MIBERROR MIBWARN MIBNOTICE
+  This causes Test::Pod::Coverage to ignore the list of subs
+=cut
+
 sub MIBERROR()  { 0 };
 sub MIBWARN()   { 1 };
 sub MIBNOTICE() { 2 };
@@ -2458,6 +2462,41 @@ sub lineno {
 }
 
 1;
+## 2016-02-17 PDUrden - For now, telling Test::Pod::Coverage to ignore this
+##      list of private functions, but eventually need to rename to using
+##      the current convetion of a leading underscore (_) to indicate a
+##      private function that does not require POD
+
+=for Pod::Coverage
+  add_token
+  assert
+  create_tokens
+  create_tree
+  extensions
+  get_token
+  import_modules
+  initialize
+  parse_Module
+  parse_agentcapabilities
+  parse_exports
+  parse_imports
+  parse_modulecompliance
+  parse_moduleidentity
+  parse_notificationgroup
+  parse_notificationtype
+  parse_objectgroup
+  parse_objectidentity
+  parse_objecttype
+  parse_oid
+  parse_one
+  parse_subtype
+  parse_textualconvention
+  parse_traptype
+  parse_type
+  resolve_type
+  unget_token
+  yylex
+=cut
 
 =head1 NAME
 
