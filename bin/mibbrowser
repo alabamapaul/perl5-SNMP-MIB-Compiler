@@ -1,7 +1,5 @@
 #!/usr/bin/perl -w
 
-BEGIN { unshift @INC, "lib" }
-
 use strict;
 use SNMP::MIB::Compiler;
 use Data::Dumper;
@@ -257,7 +255,8 @@ sub dyntree_opendir {
   }
   my @t = split /\./, $oid;
   my $o = $t[-1];
-  my $p = $t[-2] unless $#t == 0;
+  my $p;
+  $p = $t[-2] unless $#t == 0;
   for my $node (sort { $a <=> $b } keys %{$mib->{'tree'}{$o}}) {
     dyntree_adddir($tree, $mib, $mib->{'tree'}{$o}{$node}, $oid, $#t + 1);
   }
@@ -466,7 +465,7 @@ sub choose_list {
         -height => 2)->pack(-padx => 5, -side => 'left', -fill => 'y',
            -expand => 0);
   my @v = @$$var;
-  map { $_ = $quote . $_ . $quote } @v if $quote;
+  map { $_ = $quote . $_ . $quote } @v if $quote; ## no critic
   $list->insert(0, @v);
   $add->Button(-text => 'Add', -width => 8, -command => sub {
      my $v = $eadd->get;

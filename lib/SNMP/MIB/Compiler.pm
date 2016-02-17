@@ -619,7 +619,7 @@ sub compile {
       my $fh = new FileHandle "$outdir/$file$self->{'dumpext'}";
       if (defined $fh) {
   local $/ = undef;
-  $v = eval <$fh>;
+  $v = eval {<$fh>};
   if ($v) {
     map { $self->{'nodes'}{$_} = $$v{'nodes'}{$_} } keys %{$$v{'nodes'}};
     map { $self->{'types'}{$_} = $$v{'types'}{$_} } keys %{$$v{'types'}};
@@ -674,7 +674,7 @@ sub compile {
   delete $mib->{'stream'};
   # close the file
   $fh->close;
-  return undef unless $r;
+  return unless $r;
 
   # Create the MIB 'tree'
   $mib->create_tree();
@@ -731,7 +731,7 @@ sub load {
     my $fh = new FileHandle "$outdir/$file$self->{'dumpext'}";
     if (defined $fh) {
       local $/ = undef;
-      $v = eval <$fh>;
+      $v = eval {<$fh>};
       if ($v) {
   map { $self->{'nodes'}{$_} = $$v{'nodes'}{$_} } keys %{$$v{'nodes'}};
   map { $self->{'types'}{$_} = $$v{'types'}{$_} } keys %{$$v{'types'}};

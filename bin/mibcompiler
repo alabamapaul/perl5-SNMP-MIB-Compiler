@@ -1,6 +1,5 @@
 #!/usr/bin/perl -w
 
-BEGIN { unshift @INC, "lib" }
 use strict;
 use SNMP::MIB::Compiler;
 use Data::Dumper;
