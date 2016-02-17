@@ -33,6 +33,6 @@ BEGIN {
   }
 }
 
-kwalitee_ok();
+kwalitee_ok(); 
 
 done_testing;
