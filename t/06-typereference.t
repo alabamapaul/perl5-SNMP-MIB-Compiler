@@ -1,6 +1,5 @@
 # -*- mode: Perl -*-
 
-BEGIN { unshift @INC, "lib" }
 use strict;
 use FileHandle;
 use SNMP::MIB::Compiler;
