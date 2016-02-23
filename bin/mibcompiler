@@ -42,7 +42,7 @@ $mib->{'do_imports'} = 1;
 
 $mib->{'allow_underscore'} = 1;
 
-$mib->load($file) || $mib->compile($file);
+$mib->compile($file) unless ($mib->load($file));
 
 # my $node = 'snmpEnableAuthenTraps';
 # my $oid = $mib->resolve_oid($node);
