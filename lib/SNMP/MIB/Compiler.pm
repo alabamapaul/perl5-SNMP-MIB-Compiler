@@ -854,6 +854,11 @@ sub load
       $v = eval { <$fh> };
       if ($v)
       {
+        print(qq{\nLoading "$file$self->{'dumpext'}"\n});
+        print(qq{\nBEFORE: "$v"\n});
+        ## Remove any comments at top of file
+        $v =~ s/#.*\n//g;
+        print(qq{\nAFTER:  "$v"\n});
         map { $self->{'nodes'}{$_} = $$v{'nodes'}{$_} } keys %{$$v{'nodes'}};
         map { $self->{'types'}{$_} = $$v{'types'}{$_} } keys %{$$v{'types'}};
         map { $self->{'traps'}{$_} = $$v{'traps'}{$_} } keys %{$$v{'traps'}};
