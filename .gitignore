@@ -1,4 +1,5 @@
 out/
+private/
 /blib/
 /.build/
 _build/
