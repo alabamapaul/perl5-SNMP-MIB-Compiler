@@ -23,7 +23,7 @@ $Data::Dumper::Indent = 1;
 $Data::Dumper::Terse  = 1;
 
 my $mib = new SNMP::MIB::Compiler;
-$mib->add_path('mibs', 'mibs/cisco', 'mibs/com21',
+$mib->add_path('mibs', 'private/mibs', 'mibs/cisco', 'mibs/com21',
          '/home/ftp/doc/mibs/ascend');
 $mib->add_extension('', '.mib', '.my');
 
