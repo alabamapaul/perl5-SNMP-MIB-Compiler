@@ -38,6 +38,7 @@ use Exporter;
 use Carp;
 use Data::Dumper;
 use FileHandle;
+use File::Spec;
 
 @ISA     = qw(Exporter);
 @EXPORT  = ();
@@ -672,35 +673,38 @@ sub compile
   croak "Error: you MUST specify a repository\n"
     if $self->{'make_dump'} && !$outdir;
   my $filename;
-  if ($file =~ m|/([^/]+)$|)
+
+  if (-e $file)
   {
-    croak "Error: can't find $file" unless -e $file;
     $filename = $file;
-    $file     = $1;
+    (undef, undef, $file) = File::Spec->splitpath($file);
+
   }
   else
   {
-    my $dir = $self->{'srcpath'}
-      || croak "Error: you MUST specify a path using add_path()\n";
-    my $ext = $self->extensions || [''];
-    my $windir;
-    my $extfile;
-    my @dirtmp = @$dir;
-    while (my $d = shift @dirtmp)
+    croak "Error: you MUST specify a path using add_path()\n" unless $self->{'srcpath'};
+    my $extensions = $self->extensions || [''];
+    ## Iterrate through directories
+    OUTER_DIR_LOOP:
+    foreach my $dir (@{$self->{'srcpath'}})
     {
-      map {
-        my $e = $_;
-
-        # warn "testing '$d/$file$e'\n";
-        $windir = $d, $extfile = $e, last if -e "$d/$file$e";
-      } @$ext;
+      foreach my $ext (@{$extensions})
+      {
+        my $fname = File::Spec->catfile($dir, $file . $ext);
+        if (-e $fname)
+        {
+          $filename = $fname;
+          last OUTER_DIR_LOOP;
+        }
+      }
     }
-    croak "Error: can't find $file" unless $windir;
-    $filename = "$windir/$file$extfile";
+    croak "Error: can't find $file" unless $filename;
   }
 
   # push @{$self->{'filename'}}, $filename;
   $self->{'filename'} = $filename;
+
+  warn(qq{Compiling "$filename"\n}) if ($self->{debug_load});
 
   # my $filename = $ {$self->{'filename'}}[$#{$self->{'filename'}}];
 
@@ -719,9 +723,10 @@ sub compile
       if (defined $fh)
       {
         local $/ = undef;
-        $v = eval { <$fh> };
+        $v = eval  <$fh>; ## no critic
         if ($v)
         {
+          warn(qq{Used dumpfile for "$filename"\n}) if ($self->{debug_load});
           map { $self->{'nodes'}{$_} = $$v{'nodes'}{$_} } keys %{$$v{'nodes'}};
           map { $self->{'types'}{$_} = $$v{'types'}{$_} } keys %{$$v{'types'}};
           for my $node (keys %{$$v{'tree'}})
@@ -768,6 +773,7 @@ sub compile
   {
     $mib->{'debug_recursive'} = $self->{'debug_recursive'};
     $mib->{'debug_lexer'}     = $self->{'debug_lexer'};
+    $mib->{'debug_load'}      = $self->{'debug_load'};
   }
 
   # create a stream
@@ -851,14 +857,10 @@ sub load
     if (defined $fh)
     {
       local $/ = undef;
-      $v = eval { <$fh> };
+      $v = eval  <$fh>; ## no critic
       if ($v)
       {
-        print(qq{\nLoading "$file$self->{'dumpext'}"\n});
-        print(qq{\nBEFORE: "$v"\n});
-        ## Remove any comments at top of file
-        $v =~ s/#.*\n//g;
-        print(qq{\nAFTER:  "$v"\n});
+        warn(qq{\nLoaded "$file$self->{'dumpext'}"\n}) if ($self->{debug_load});
         map { $self->{'nodes'}{$_} = $$v{'nodes'}{$_} } keys %{$$v{'nodes'}};
         map { $self->{'types'}{$_} = $$v{'types'}{$_} } keys %{$$v{'types'}};
         map { $self->{'traps'}{$_} = $$v{'traps'}{$_} } keys %{$$v{'traps'}};
@@ -2732,6 +2734,7 @@ sub import_modules
     {
       $mib->{'debug_recursive'} = $self->{'debug_recursive'};
       $mib->{'debug_lexer'}     = $self->{'debug_lexer'};
+      $mib->{'debug_load'}      = $self->{'debug_load'};
     }
     $mib->load($k) || $mib->compile($k);
     for my $item (@{$self->{'imports'}{$k}})
