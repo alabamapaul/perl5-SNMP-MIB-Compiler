@@ -17,10 +17,30 @@ use Tk;
 use Tk::Tree;
 use Tk::Dialog;
 use Tk::FBox;
+use Getopt::Long::Descriptive qw(describe_options prog_name);
+
+
+my $VERSION = qq{0.001};
+
+my ($options, $usage) = describe_options(
+  qq{%c %o <MIB Filename>},
+  [ qq{source|s=s@} => qq{Source path to search for MIB files}, {default => [qw(mibs)]} ],
+  [ qq{out|o=s}     => qq{Output path for compiled MIB files},  {default => qq{out}} ],
+  [ qq{ext|x=s@}    => qq{Extension for raw MIB files},         {default => [qq{}, qw(.mib .my)]} ],
+  [ qq{debug|d+}    => qq{Debug level},                         {default => 0} ],
+  [ qq{help}        => qq{Display usage and exit},],
+  [ qq{version|v}   => qq{Display version and exit},],
+);
+
+## Print usage and exit
+print($usage->text), exit if($options->help);
+
+## Print version and exit
+print(prog_name(), qq{ v}, $VERSION, qq{\n}), exit if ($options->version);
+
 
 my $DATE = '1999/09/06';
 
-my $outdir = 'out';
 my $file   = shift;
 
 $Data::Dumper::Purity = 1;
@@ -28,9 +48,20 @@ $Data::Dumper::Indent = 1;
 $Data::Dumper::Terse  = 1;
 
 my $mib = new SNMP::MIB::Compiler;
-$mib->add_path('mibs', 'mibs/cisco', 'mibs/com21', '/home/ftp/doc/mibs/ascend');
-$mib->add_extension('', '.mib', '.my');
+## Add paths
+$mib->add_path($_) foreach (@{$options->source});
 
+## Add extensions
+$mib->add_extension($_) foreach (@{$options->ext});
+
+## Display values
+if ($options->debug)
+{
+  print(qq{Source paths: "}, join(qq{", "}, @{$options->source}), qq{"\n});
+  print(qq{Extensions:   "}, join(qq{", "}, @{$options->ext}), qq{"\n});
+}
+
+my $outdir = $options->out;
 mkdir $outdir, oct 755 unless -d $outdir;
 $mib->repository($outdir);
 
@@ -38,11 +69,13 @@ $mib->{'accept_smiv1'} = 1;
 $mib->{'accept_smiv2'} = 1;
 
 $mib->{'debug_recursive'} = 1;
-$mib->{'debug_lexer'}     = 0;
+$mib->{'debug_lexer'}     = ($options->debug >= 3 ? 1 : 0);
+$mib->{'debug_load'}      = ($options->debug >= 2 ? 1 : 0);
 
 $mib->{'make_dump'}  = 1;
 $mib->{'use_dump'}   = 1;
 $mib->{'do_imports'} = 1;
+
 
 $mib->load($file)
   || $mib->compile($file)
@@ -56,7 +89,7 @@ exit if $file;
 my $DEBUG = 0;
 my $title = "MIB Browser";
 my $top   = new MainWindow(-title => $title);
-$top->OnDestroy(sub { exit; });
+#$top->OnDestroy(sub { exit; });
 my $wins;
 
 my $menu = $top->Frame(
